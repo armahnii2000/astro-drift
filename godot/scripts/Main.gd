@@ -6,6 +6,8 @@ const SCORE_FOR_SIZE := [100, 50, 20]
 
 var player: Player
 var hud: HUD
+var crt_layer: CanvasLayer
+var crt_enabled: bool = true
 var score: int = 0
 var lives: int = STARTING_LIVES
 var game_over: bool = false
@@ -17,7 +19,26 @@ func _ready() -> void:
 	screen_size = get_viewport_rect().size
 	hud = HUD.new()
 	add_child(hud)
+	_setup_crt()
 	_start_game()
+
+func _setup_crt() -> void:
+	crt_layer = CanvasLayer.new()
+	crt_layer.layer = 100
+	var rect := ColorRect.new()
+	rect.anchor_right = 1.0
+	rect.anchor_bottom = 1.0
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var mat := ShaderMaterial.new()
+	mat.shader = load("res://shaders/crt.gdshader")
+	mat.set_shader_parameter("resolution", screen_size)
+	rect.material = mat
+	crt_layer.add_child(rect)
+	add_child(crt_layer)
+
+func _toggle_crt() -> void:
+	crt_enabled = not crt_enabled
+	crt_layer.visible = crt_enabled
 
 func _start_game() -> void:
 	for c in get_children():
@@ -111,5 +132,8 @@ func _count_asteroids_remaining(exclude: Asteroid) -> int:
 	return n
 
 func _unhandled_input(event: InputEvent) -> void:
-	if game_over and event is InputEventKey and event.pressed and event.keycode == KEY_R:
-		_start_game()
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_T:
+			_toggle_crt()
+		elif game_over and event.keycode == KEY_R:
+			_start_game()

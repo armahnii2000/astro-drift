@@ -1,55 +1,50 @@
-# Astro Drift
+# Astro Drift — Godot 4
 
-A small 2D arcade shooter built in **Godot 4.6** with GDScript. Inspired by the Atari classic *Asteroids*: pilot a drifting ship through a screen-wrapping field of asteroids, blast them into smaller pieces, and survive as many waves as you can.
+The reference implementation: a full Asteroids-style game in Godot 4.6 with GDScript.
 
-## Demo
+## Engine twist — CRT post-process shader
 
-![gameplay](docs/demo.gif)
+`shaders/crt.gdshader` is a fragment shader stacked on top of the gameplay via a `CanvasLayer + ColorRect` with `material = ShaderMaterial`. It samples `hint_screen_texture` and applies:
 
-## Controls
+- **Phosphor bloom** — 6-tap neighborhood sum, additive
+- **Scanlines** — sine-modulated brightness reduction along Y
+- **Barrel distortion** — UV remap that bulges the image outward like a curved CRT face
+- **Chromatic aberration** — red sampled slightly right, blue slightly left
+- **Vignette** — corner darkening using `uv * (1 - uv)`
 
-| Action | Keys |
-|---|---|
-| Rotate | `A` / `D` or `Left` / `Right` |
-| Thrust | `W` or `Up` |
-| Fire | `Space` or `J` |
-| Restart (after Game Over) | `R` |
+On by default. Toggle with **`T`**.
 
-## Features
-
-- Newtonian-style inertial movement with directional thrust and drag
-- Screen wrapping for player, bullets, and asteroids
-- Three asteroid size tiers that split on hit
-- Wave progression with increasing density
-- Lives, score, post-death invulnerability, and a game-over flow
-- All visuals rendered procedurally via `_draw()` — no external assets
-
-## Project layout
-
-```
-astro-drift/
-├── project.godot          # Engine config + window/render settings
-├── icon.svg               # App icon
-├── scenes/
-│   └── Main.tscn          # Entry scene
-└── scripts/
-    ├── Main.gd            # Game manager: waves, lives, score, input
-    ├── Player.gd          # Ship: input, physics, shooting
-    ├── Bullet.gd          # Projectile + bullet-asteroid collision
-    ├── Asteroid.gd        # Drifting asteroid + procedural shape
-    └── HUD.gd             # Score / lives / banner UI
-```
-
-## Building
-
-Open the project folder in Godot 4.6+ and press `F5`, or run from the command line:
+## Run
 
 ```sh
 godot --path .
 ```
 
-To export a Windows build, configure an Export Preset in *Project → Export* and export to `exports/`.
+Or open this folder in the Godot editor and press `F5`.
 
-## Notes
+## Controls
 
-This was built as a self-contained portfolio piece to demonstrate Godot fundamentals: scene tree composition, `Area2D` overlap detection, custom `_draw()` rendering, signal-based decoupling between nodes, and resolution-independent screen wrapping.
+| Action | Keys |
+|---|---|
+| Rotate | `A`/`D` or `←`/`→` |
+| Thrust | `W` or `↑` |
+| Fire | `Space` or `J` |
+| Toggle CRT shader | `T` |
+| Restart after Game Over | `R` |
+
+## Project layout
+
+```
+godot/
+├── project.godot          ← engine config
+├── icon.svg
+├── scenes/Main.tscn       ← entry scene (Node2D + Main.gd)
+├── scripts/
+│   ├── Main.gd            ← game manager: waves, lives, score, CRT setup
+│   ├── Player.gd          ← ship: input, physics, shooting
+│   ├── Bullet.gd          ← projectile + Area2D collision
+│   ├── Asteroid.gd        ← drifting asteroid, procedural shape, size tiers
+│   └── HUD.gd             ← Label HUD on a CanvasLayer
+└── shaders/
+    └── crt.gdshader       ← CRT post-process (the twist)
+```
