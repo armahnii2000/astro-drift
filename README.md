@@ -1,6 +1,10 @@
 # Astro Drift — Multi-Engine Game Studies
 
-A single drifting-ship arcade concept implemented across **seven game engines and frameworks**, side-by-side, as a comparison study. Each subfolder is a self-contained project with its own README and run instructions.
+**▶ Play in your browser: [armahnii2000.github.io/astro-drift](https://armahnii2000.github.io/astro-drift/)**
+
+A single drifting-ship Asteroids-style game implemented across **eight game engines and frameworks**, side-by-side, as a comparison study. Each subfolder is a self-contained project with its own README and run instructions.
+
+Three engines ship as live browser builds (Godot, Love 2D, PyGame). The other five are source-of-truth projects you open in their respective editors.
 
 | Folder | Engine / Framework | Language | Status |
 |---|---|---|---|
