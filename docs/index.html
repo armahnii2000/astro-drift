@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astro Drift — Multi-Engine Game Studies</title>
+<style>
+	:root {
+		--bg: #07090f;
+		--panel: #11161f;
+		--border: #1d2632;
+		--text: #d4e0ee;
+		--muted: #98aac4;
+		--accent: #4a8fff;
+		--green: #5fffaf;
+		--amber: #ffd470;
+	}
+	* { box-sizing: border-box; }
+	body {
+		font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+		background: var(--bg);
+		color: var(--text);
+		margin: 0;
+		padding: 56px 24px 80px;
+		line-height: 1.6;
+	}
+	.wrap { max-width: 980px; margin: 0 auto; }
+	h1 {
+		font-size: 44px;
+		letter-spacing: 1px;
+		margin: 0 0 8px;
+		background: linear-gradient(135deg, #fff, #4a8fff);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+	.sub { color: var(--muted); font-size: 17px; margin: 0 0 32px; }
+	p { color: #c0cee0; font-size: 15px; }
+	h3 { color: var(--muted); font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 36px; }
+	pre {
+		background: var(--panel);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 18px 22px;
+		font-size: 14px;
+		color: #b8c7dc;
+		overflow-x: auto;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 14px;
+		margin: 18px 0;
+	}
+	.card {
+		background: var(--panel);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 18px 18px 16px;
+		transition: transform 0.15s ease, border-color 0.15s ease;
+		display: flex;
+		flex-direction: column;
+	}
+	.card.live:hover {
+		transform: translateY(-2px);
+		border-color: var(--accent);
+	}
+	.card.src:hover {
+		border-color: #3d4858;
+	}
+	.card-head {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		margin-bottom: 4px;
+	}
+	.card a.title {
+		color: var(--accent);
+		text-decoration: none;
+		font-size: 20px;
+		font-weight: bold;
+	}
+	.card.src a.title { color: #a4b5cc; }
+	.card .lang { color: #6a8aae; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin: 0 0 10px; }
+	.card .desc { color: #b8c7dc; font-size: 13px; flex: 1; }
+	.badge {
+		display: inline-block;
+		font-size: 10px;
+		padding: 2px 8px;
+		border-radius: 4px;
+		font-weight: bold;
+		letter-spacing: 0.5px;
+	}
+	.badge.live { background: #0a4f2a; color: var(--green); }
+	.badge.src { background: #4a3a0a; color: var(--amber); }
+	.foot {
+		color: var(--muted);
+		font-size: 13px;
+		margin-top: 56px;
+		text-align: center;
+		border-top: 1px solid var(--border);
+		padding-top: 24px;
+	}
+	.foot a { color: var(--accent); text-decoration: none; }
+	.foot a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+	<h1>Astro Drift</h1>
+	<p class="sub">An Asteroids-style arcade game implemented across eight game engines, side by side, as a comparison study.</p>
+
+	<p>Every port runs the same drifting-ship physics with identical inertia constants (<code>THRUST=350, ROT=4, DRAG=0.55</code>), then layers its own engine-specific twist on top. Three of them are playable in your browser below; the rest are source-of-truth projects you open in their respective editors.</p>
+
+	<h3>Controls (every version)</h3>
+	<pre>← →   rotate
+↑     thrust
+↓     brake
+Del   fire
+Ins   toggle engine special (CRT shader / AI autopilot)
+End   restart after game over
+Esc   quit</pre>
+
+	<h3>Playable in browser</h3>
+	<div class="grid">
+		<a class="card live" href="./godot/">
+			<div>
+				<div class="card-head">
+					<span class="title">Godot 4 →</span>
+					<span class="badge live">LIVE</span>
+				</div>
+				<div class="lang">GDScript</div>
+				<div class="desc">Full game with waves, lives, scoring, splitting asteroids. Twist: <strong>CRT post-process shader</strong> — phosphor bloom, scanlines, barrel distortion, chromatic aberration. Press <code>Ins</code> to toggle.</div>
+			</div>
+		</a>
+		<a class="card live" href="./love2d/">
+			<div>
+				<div class="card-head">
+					<span class="title">Love 2D →</span>
+					<span class="badge live">LIVE</span>
+				</div>
+				<div class="lang">Lua</div>
+				<div class="desc">Twist: <strong>authentic 1979 vector-display phosphor</strong>. Every shape drawn three times — wide additive halo + narrow halo + crisp stroke with per-frame brightness flicker. Looks like a real CRT.</div>
+			</div>
+		</a>
+		<a class="card live" href="./pygame/">
+			<div>
+				<div class="card-head">
+					<span class="title">PyGame →</span>
+					<span class="badge live">LIVE</span>
+				</div>
+				<div class="lang">Python</div>
+				<div class="desc">Twist: <strong>numpy procedural nebula</strong> + <strong>AI autopilot</strong> (press <code>Ins</code>). The backdrop is generated entirely from numpy Gaussians + noise; the AI is a 20-line heuristic that locks the nearest asteroid and dodges anything inside an 80px danger radius.</div>
+			</div>
+		</a>
+	</div>
+
+	<h3>Open in editor (source on GitHub)</h3>
+	<div class="grid">
+		<a class="card src" href="https://github.com/armahnii2000/astro-drift/tree/main/defold">
+			<div>
+				<div class="card-head">
+					<span class="title">Defold ↗</span>
+					<span class="badge src">SOURCE</span>
+				</div>
+				<div class="lang">Lua</div>
+				<div class="desc">King's open-source mobile engine. Flat game-object + collection architecture. Hand-authored <code>game.project</code>, collections, GOs, scripts, input bindings, GUI scene.</div>
+			</div>
+		</a>
+		<a class="card src" href="https://github.com/armahnii2000/astro-drift/tree/main/solar2d">
+			<div>
+				<div class="card-head">
+					<span class="title">Solar 2D ↗</span>
+					<span class="badge src">SOURCE</span>
+				</div>
+				<div class="lang">Lua</div>
+				<div class="desc">Community continuation of Corona SDK. Mobile-first Lua framework with letterbox content scaling. Opens in the Solar 2D Simulator.</div>
+			</div>
+		</a>
+		<a class="card src" href="https://github.com/armahnii2000/astro-drift/tree/main/panda3d">
+			<div>
+				<div class="card-head">
+					<span class="title">Panda 3D ↗</span>
+					<span class="badge src">SOURCE</span>
+				</div>
+				<div class="lang">Python</div>
+				<div class="desc">Disney VR's open-source 3D engine. Same game projected into 3D space — box-mesh ship on a lit XY plane with world-bound wrap. <code>pip install panda3d && python main.py</code>.</div>
+			</div>
+		</a>
+		<a class="card src" href="https://github.com/armahnii2000/astro-drift/tree/main/unity">
+			<div>
+				<div class="card-head">
+					<span class="title">Unity ↗</span>
+					<span class="badge src">SOURCE</span>
+				</div>
+				<div class="lang">C# (MonoBehaviour)</div>
+				<div class="desc">Targets Unity 2022.3 LTS. <code>PlayerController</code>, <code>AsteroidController</code>, <code>BulletController</code>, <code>GameManager</code> plus Unity-flavored juice: <code>ThrustTrail</code> (particle emission), <code>CameraShake</code> (trauma-based), <code>ExplosionEffect</code>, <code>SfxManager</code>.</div>
+			</div>
+		</a>
+		<a class="card src" href="https://github.com/armahnii2000/astro-drift/tree/main/stride">
+			<div>
+				<div class="card-head">
+					<span class="title">Stride ↗</span>
+					<span class="badge src">SOURCE</span>
+				</div>
+				<div class="lang">C# (.NET 8)</div>
+				<div class="desc">Stride 4.2 (formerly Xenko). <code>SyncScript</code>-based player and bullet on the XZ plane. <code>ControlsUi.cs</code> builds the overlay with <code>Stride.UI.Canvas</code> + <code>TextBlock</code>.</div>
+			</div>
+		</a>
+	</div>
+
+	<div class="foot">
+		Built as a portfolio piece for game-development specialist work.<br>
+		Source: <a href="https://github.com/armahnii2000/astro-drift">github.com/armahnii2000/astro-drift</a>
+	</div>
+</div>
+</body>
+</html>
