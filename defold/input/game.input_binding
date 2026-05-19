@@ -1,0 +1,36 @@
+key_trigger {
+  input: KEY_A
+  action: "left"
+}
+key_trigger {
+  input: KEY_LEFT
+  action: "left"
+}
+key_trigger {
+  input: KEY_D
+  action: "right"
+}
+key_trigger {
+  input: KEY_RIGHT
+  action: "right"
+}
+key_trigger {
+  input: KEY_W
+  action: "thrust"
+}
+key_trigger {
+  input: KEY_UP
+  action: "thrust"
+}
+key_trigger {
+  input: KEY_SPACE
+  action: "fire"
+}
+key_trigger {
+  input: KEY_J
+  action: "fire"
+}
+key_trigger {
+  input: KEY_ESC
+  action: "quit"
+}
