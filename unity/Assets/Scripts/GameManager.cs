@@ -82,6 +82,11 @@ namespace AstroDrift
 		void OnGUI()
 		{
 			GUI.Label(new Rect(12, 8, 400, 28), $"Score: {_score}    Lives: {_lives}    Wave: {_wave}");
+
+			const string controls = "A/D rotate   |   W thrust   |   Space fire   |   R restart   |   Esc quit";
+			var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
+			style.normal.textColor = new Color(0.62f, 0.7f, 0.85f);
+			GUI.Label(new Rect(0, Screen.height - 26, Screen.width, 22), controls, style);
 		}
 	}
 }

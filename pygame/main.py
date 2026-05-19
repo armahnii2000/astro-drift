@@ -271,8 +271,13 @@ def main() -> None:
 
 		hud_color = (220, 230, 255) if not ai_on else (255, 200, 120)
 		mode = "AI AUTOPILOT" if ai_on else "MANUAL"
-		hud_text = f"Score {score}   Wave {wave}   Lives {lives}   [{mode}]   Tab: toggle AI   Esc: quit"
+		hud_text = f"Score {score}   Wave {wave}   Lives {lives}   [{mode}]"
 		screen.blit(font.render(hud_text, True, hud_color), (12, 12))
+
+		controls = "A/D rotate  |  W thrust  |  Space fire  |  Tab toggle AI  |  R restart  |  Esc quit"
+		ctl_surf = font.render(controls, True, (160, 175, 215))
+		screen.blit(ctl_surf, (W // 2 - ctl_surf.get_width() // 2, H - 22))
+
 		if game_over:
 			over = big_font.render("GAME OVER — press R to restart", True, (255, 220, 160))
 			screen.blit(over, (W // 2 - over.get_width() // 2, H // 2 - 20))

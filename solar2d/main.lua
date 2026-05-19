@@ -24,10 +24,16 @@ ship.strokeWidth = 1.5
 ship:setStrokeColor(0.55, 0.75, 1.0)
 
 local hud = display.newText({
-	text = "Astro Drift — Solar 2D  |  WASD/arrows fly, Space fires",
-	x = 12 + 220, y = 18, font = native.systemFontBold, fontSize = 14,
+	text = "Astro Drift — Solar 2D",
+	x = W / 2, y = 18, font = native.systemFontBold, fontSize = 14,
 })
 hud:setFillColor(0.85, 0.9, 1.0)
+
+local controls = display.newText({
+	text = "A/D rotate  |  W thrust  |  Space fire  |  Esc quit",
+	x = W / 2, y = H - 14, font = native.systemFont, fontSize = 12,
+})
+controls:setFillColor(0.62, 0.7, 0.85)
 
 local state = { vx = 0, vy = 0, heading = 0, cooldown = 0 }
 local keys = {}

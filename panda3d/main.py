@@ -7,12 +7,14 @@ fundamentals: ShowBase, task scheduler, lighting, keyboard input.
 
 import math
 
+from direct.gui.OnscreenText import OnscreenText
 from direct.showbase.ShowBase import ShowBase
 from direct.task import Task
 from panda3d.core import (
 	AmbientLight,
 	DirectionalLight,
 	LineSegs,
+	TextNode,
 	Vec3,
 	Vec4,
 	WindowProperties,
@@ -53,6 +55,17 @@ class AstroDrift3D(ShowBase):
 
 		self.camera.setPos(0, -28, 14)
 		self.camera.lookAt(0, 0, 0)
+
+		OnscreenText(
+			text="Astro Drift — Panda 3D",
+			pos=(-1.75, 0.92), scale=0.055,
+			fg=(0.92, 0.96, 1.0, 1), align=TextNode.ALeft, mayChange=False,
+		)
+		OnscreenText(
+			text="A/D rotate   |   W thrust   |   Esc quit",
+			pos=(0, -0.94), scale=0.05,
+			fg=(0.62, 0.7, 0.85, 1), align=TextNode.ACenter, mayChange=False,
+		)
 
 		self.velocity = Vec3(0, 0, 0)
 		self.heading = 0.0

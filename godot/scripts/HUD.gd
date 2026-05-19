@@ -1,9 +1,12 @@
 class_name HUD
 extends CanvasLayer
 
+const CONTROLS_TEXT := "A/D rotate   ·   W thrust   ·   Space fire   ·   T toggle CRT   ·   R restart   ·   Esc quit"
+
 var _score_label: Label
 var _lives_label: Label
 var _message_label: Label
+var _controls_label: Label
 
 func _ready() -> void:
 	_score_label = _make_label(Vector2(20, 14), 26, Color(0.92, 0.96, 1.0))
@@ -12,6 +15,11 @@ func _ready() -> void:
 	_message_label.size = Vector2(1280, 160)
 	_message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_message_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+	_controls_label = _make_label(Vector2(0, 688), 16, Color(0.62, 0.7, 0.85))
+	_controls_label.size = Vector2(1280, 24)
+	_controls_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_controls_label.text = CONTROLS_TEXT
 
 func _make_label(pos: Vector2, size: int, color: Color) -> Label:
 	var lbl := Label.new()

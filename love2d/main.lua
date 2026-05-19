@@ -252,6 +252,11 @@ function love.draw()
 		love.graphics.printf("GAME OVER — press R to restart", 0, H / 2 - 14, W, "center")
 	end
 
+	love.graphics.setColor(0.62, 0.7, 0.85)
+	love.graphics.printf(
+		"A/D rotate   |   W thrust   |   Space fire   |   R restart   |   Esc quit",
+		0, H - 22, W, "center")
+
 	love.graphics.setCanvas()
 	love.graphics.setColor(1, 1, 1)
 	love.graphics.setShader(crt_shader)
