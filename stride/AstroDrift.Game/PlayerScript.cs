@@ -10,6 +10,7 @@ namespace AstroDrift
 		public float Thrust { get; set; } = 12f;
 		public float RotationSpeed { get; set; } = 4f;
 		public float Drag { get; set; } = 0.55f;
+		public float BrakeDrag { get; set; } = 0.08f;
 		public float MaxSpeed { get; set; } = 16f;
 		public float WorldBound { get; set; } = 12f;
 		public float ShootCooldown { get; set; } = 0.18f;
@@ -25,17 +26,18 @@ namespace AstroDrift
 			float dt = (float)Game.UpdateTime.Elapsed.TotalSeconds;
 
 			float rotInput = 0f;
-			if (Input.IsKeyDown(Keys.A) || Input.IsKeyDown(Keys.Left)) rotInput -= 1f;
-			if (Input.IsKeyDown(Keys.D) || Input.IsKeyDown(Keys.Right)) rotInput += 1f;
+			if (Input.IsKeyDown(Keys.Left)) rotInput -= 1f;
+			if (Input.IsKeyDown(Keys.Right)) rotInput += 1f;
 			_heading += rotInput * RotationSpeed * dt;
 
-			if (Input.IsKeyDown(Keys.W) || Input.IsKeyDown(Keys.Up))
+			if (Input.IsKeyDown(Keys.Up))
 			{
 				var forward = ForwardVector();
 				_velocity += forward * Thrust * dt;
 			}
 
-			_velocity *= (float)Math.Pow(Drag, dt);
+			float damp = Input.IsKeyDown(Keys.Down) ? BrakeDrag : Drag;
+			_velocity *= (float)Math.Pow(damp, dt);
 			float speed = _velocity.Length();
 			if (speed > MaxSpeed) _velocity = (_velocity / speed) * MaxSpeed;
 
@@ -45,7 +47,7 @@ namespace AstroDrift
 			Entity.Transform.Rotation = Quaternion.RotationY(-_heading);
 
 			_cooldown -= dt;
-			if ((Input.IsKeyDown(Keys.Space) || Input.IsKeyDown(Keys.J)) && _cooldown <= 0f)
+			if (Input.IsKeyDown(Keys.Delete) && _cooldown <= 0f)
 			{
 				_cooldown = ShootCooldown;
 				SpawnBullet();

@@ -30,7 +30,7 @@ local hud = display.newText({
 hud:setFillColor(0.85, 0.9, 1.0)
 
 local controls = display.newText({
-	text = "A/D rotate  |  W thrust  |  Space fire  |  Esc quit",
+	text = "← → rotate  |  ↑ thrust  |  ↓ brake  |  Del fire  |  Esc quit",
 	x = W / 2, y = H - 14, font = native.systemFont, fontSize = 12,
 })
 controls:setFillColor(0.62, 0.7, 0.85)
@@ -64,14 +64,14 @@ end
 Runtime:addEventListener("enterFrame", function()
 	local dt = 1 / 60
 
-	if keys.a or keys.left then state.heading = state.heading - ROT_SPEED * dt end
-	if keys.d or keys.right then state.heading = state.heading + ROT_SPEED * dt end
-	if keys.w or keys.up then
+	if keys.left then state.heading = state.heading - ROT_SPEED * dt end
+	if keys.right then state.heading = state.heading + ROT_SPEED * dt end
+	if keys.up then
 		state.vx = state.vx + math.cos(state.heading - math.pi / 2) * THRUST * dt
 		state.vy = state.vy + math.sin(state.heading - math.pi / 2) * THRUST * dt
 	end
 
-	local damping = DRAG_PER_SEC ^ dt
+	local damping = (keys.down and 0.08 or DRAG_PER_SEC) ^ dt
 	state.vx, state.vy = state.vx * damping, state.vy * damping
 	local sp = math.sqrt(state.vx * state.vx + state.vy * state.vy)
 	if sp > MAX_SPEED then
@@ -83,7 +83,7 @@ Runtime:addEventListener("enterFrame", function()
 	ship.rotation = math.deg(state.heading)
 
 	state.cooldown = state.cooldown - dt
-	if (keys.space or keys.j) and state.cooldown <= 0 then
+	if keys.deleteForward and state.cooldown <= 0 then
 		state.cooldown = 0.18
 		fire()
 	end

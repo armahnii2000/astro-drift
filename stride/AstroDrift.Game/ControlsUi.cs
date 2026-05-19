@@ -19,7 +19,7 @@ namespace AstroDrift
 
 			var controls = new TextBlock
 			{
-				Text = "A/D rotate   |   W thrust   |   Space fire   |   Esc quit",
+				Text = "← → rotate   |   ↑ thrust   |   ↓ brake   |   Del fire   |   Esc quit",
 				TextColor = new Color(158, 178, 217),
 				TextSize = 18,
 				HorizontalAlignment = HorizontalAlignment.Center,

@@ -62,7 +62,7 @@ class AstroDrift3D(ShowBase):
 			fg=(0.92, 0.96, 1.0, 1), align=TextNode.ALeft, mayChange=False,
 		)
 		OnscreenText(
-			text="A/D rotate   |   W thrust   |   Esc quit",
+			text="← → rotate   |   ↑ thrust   |   ↓ brake   |   Esc quit",
 			pos=(0, -0.94), scale=0.05,
 			fg=(0.62, 0.7, 0.85, 1), align=TextNode.ACenter, mayChange=False,
 		)
@@ -70,7 +70,7 @@ class AstroDrift3D(ShowBase):
 		self.velocity = Vec3(0, 0, 0)
 		self.heading = 0.0
 
-		self.keys = {"w": False, "a": False, "d": False, "arrow_up": False, "arrow_left": False, "arrow_right": False}
+		self.keys = {"arrow_up": False, "arrow_down": False, "arrow_left": False, "arrow_right": False}
 		for k in self.keys:
 			self.accept(k, self._set_key, [k, True])
 			self.accept(f"{k}-up", self._set_key, [k, False])
@@ -95,22 +95,24 @@ class AstroDrift3D(ShowBase):
 
 	def _update(self, task) -> int:
 		dt = globalClock.getDt()
-		ROT, THRUST_F, DRAG, MAX_SPEED = 90.0, 9.0, 0.55, 12.0
+		ROT, THRUST_F, DRAG, BRAKE, MAX_SPEED = 90.0, 9.0, 0.55, 0.08, 12.0
 
 		rot_input = 0.0
-		if self.keys["a"] or self.keys["arrow_left"]:
+		if self.keys["arrow_left"]:
 			rot_input -= 1.0
-		if self.keys["d"] or self.keys["arrow_right"]:
+		if self.keys["arrow_right"]:
 			rot_input += 1.0
 		self.heading += rot_input * ROT * dt
 
-		thrusting = self.keys["w"] or self.keys["arrow_up"]
+		thrusting = self.keys["arrow_up"]
+		braking = self.keys["arrow_down"]
 		if thrusting:
 			rad = math.radians(-self.heading)
 			fwd = Vec3(math.sin(rad), math.cos(rad), 0)
 			self.velocity += fwd * THRUST_F * dt
 
-		self.velocity *= (DRAG ** dt)
+		damp = BRAKE if braking else DRAG
+		self.velocity *= (damp ** dt)
 		if self.velocity.length() > MAX_SPEED:
 			self.velocity.normalize()
 			self.velocity *= MAX_SPEED

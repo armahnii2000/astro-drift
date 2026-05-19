@@ -1,7 +1,7 @@
 class_name HUD
 extends CanvasLayer
 
-const CONTROLS_TEXT := "A/D rotate   ·   W thrust   ·   Space fire   ·   T toggle CRT   ·   R restart   ·   Esc quit"
+const CONTROLS_TEXT := "← → rotate   ·   ↑ thrust   ·   ↓ brake   ·   Del fire   ·   Ins CRT   ·   End restart   ·   Esc quit"
 
 var _score_label: Label
 var _lives_label: Label

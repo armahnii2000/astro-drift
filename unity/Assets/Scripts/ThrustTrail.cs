@@ -15,7 +15,7 @@ namespace AstroDrift
 		void Update()
 		{
 			if (thrustParticles == null) return;
-			bool thrusting = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
+			bool thrusting = Input.GetKey(KeyCode.UpArrow);
 			var emission = thrustParticles.emission;
 			emission.rateOverTime = thrusting ? maxEmissionRate : 0f;
 		}

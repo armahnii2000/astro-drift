@@ -37,7 +37,7 @@ nodes {
     z: 0.0
   }
   type: TYPE_TEXT
-  text: "A/D rotate   |   W thrust   |   Space fire   |   Esc quit"
+  text: "← → rotate   |   ↑ thrust   |   ↓ brake   |   Del fire   |   End restart   |   Esc quit"
   font: "default"
   id: "controls"
   pivot: PIVOT_CENTER

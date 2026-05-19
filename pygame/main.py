@@ -181,29 +181,31 @@ def main() -> None:
 			if e.type == pygame.KEYDOWN:
 				if e.key == pygame.K_ESCAPE:
 					pygame.quit(); sys.exit()
-				if e.key == pygame.K_TAB:
+				if e.key == pygame.K_INSERT:
 					ai_on = not ai_on
-				if e.key == pygame.K_r and game_over:
+				if e.key == pygame.K_END and game_over:
 					ship = Ship(); asteroids.clear(); bullets.clear()
 					score, wave, lives, game_over = 0, 1, 3, False
 					spawn_wave(asteroids, wave)
 
 		keys = pygame.key.get_pressed()
+		braking = False
 		if not game_over:
 			if ai_on:
 				rot_l, rot_r, thrusting, firing = ai_step(ship, asteroids, dt)
 			else:
-				rot_l = keys[pygame.K_a] or keys[pygame.K_LEFT]
-				rot_r = keys[pygame.K_d] or keys[pygame.K_RIGHT]
-				thrusting = keys[pygame.K_w] or keys[pygame.K_UP]
-				firing = keys[pygame.K_SPACE] or keys[pygame.K_j]
+				rot_l = keys[pygame.K_LEFT]
+				rot_r = keys[pygame.K_RIGHT]
+				thrusting = keys[pygame.K_UP]
+				braking = keys[pygame.K_DOWN]
+				firing = keys[pygame.K_DELETE]
 
 			if rot_l: ship.rot -= ROT_SPEED * dt
 			if rot_r: ship.rot += ROT_SPEED * dt
 			if thrusting:
 				ship.vx += math.cos(ship.rot - math.pi / 2) * THRUST * dt
 				ship.vy += math.sin(ship.rot - math.pi / 2) * THRUST * dt
-			damp = DRAG_PER_SEC ** dt
+			damp = (0.08 if braking else DRAG_PER_SEC) ** dt
 			ship.vx *= damp; ship.vy *= damp
 			sp = math.hypot(ship.vx, ship.vy)
 			if sp > MAX_SPEED:
@@ -265,7 +267,7 @@ def main() -> None:
 			hull = transform_polygon([(0, -14), (10, 12), (0, 6), (-10, 12)], ship.x, ship.y, ship.rot)
 			pygame.draw.polygon(screen, (230, 242, 255), hull)
 			pygame.draw.polygon(screen, (140, 192, 255), hull, 2)
-			if (keys[pygame.K_w] or keys[pygame.K_UP]) and not ai_on:
+			if keys[pygame.K_UP] and not ai_on:
 				flame = transform_polygon([(-5, 8), (0, 18 + random.uniform(0, 6)), (5, 8)], ship.x, ship.y, ship.rot)
 				pygame.draw.polygon(screen, (255, 153, 51), flame)
 
@@ -274,12 +276,12 @@ def main() -> None:
 		hud_text = f"Score {score}   Wave {wave}   Lives {lives}   [{mode}]"
 		screen.blit(font.render(hud_text, True, hud_color), (12, 12))
 
-		controls = "A/D rotate  |  W thrust  |  Space fire  |  Tab toggle AI  |  R restart  |  Esc quit"
+		controls = "← → rotate  |  ↑ thrust  |  ↓ brake  |  Del fire  |  Ins toggle AI  |  End restart  |  Esc quit"
 		ctl_surf = font.render(controls, True, (160, 175, 215))
 		screen.blit(ctl_surf, (W // 2 - ctl_surf.get_width() // 2, H - 22))
 
 		if game_over:
-			over = big_font.render("GAME OVER — press R to restart", True, (255, 220, 160))
+			over = big_font.render("GAME OVER — press End to restart", True, (255, 220, 160))
 			screen.blit(over, (W // 2 - over.get_width() // 2, H // 2 - 20))
 
 		pygame.display.flip()

@@ -113,15 +113,16 @@ function love.update(dt)
 	flicker = flicker + dt * 50
 
 	if not game_over then
-		if love.keyboard.isDown("a", "left") then ship.rot = ship.rot - ROT_SPEED * dt end
-		if love.keyboard.isDown("d", "right") then ship.rot = ship.rot + ROT_SPEED * dt end
+		if love.keyboard.isDown("left") then ship.rot = ship.rot - ROT_SPEED * dt end
+		if love.keyboard.isDown("right") then ship.rot = ship.rot + ROT_SPEED * dt end
 
-		local thrusting = love.keyboard.isDown("w", "up")
+		local thrusting = love.keyboard.isDown("up")
+		local braking = love.keyboard.isDown("down")
 		if thrusting then
 			ship.vx = ship.vx + math.cos(ship.rot - math.pi / 2) * THRUST * dt
 			ship.vy = ship.vy + math.sin(ship.rot - math.pi / 2) * THRUST * dt
 		end
-		local damp = DRAG_PER_SEC ^ dt
+		local damp = (braking and 0.08 or DRAG_PER_SEC) ^ dt
 		ship.vx, ship.vy = ship.vx * damp, ship.vy * damp
 		local sp = len(ship.vx, ship.vy)
 		if sp > MAX_SPEED then
@@ -131,7 +132,7 @@ function love.update(dt)
 		wrap(ship, W, H)
 
 		cooldown = cooldown - dt
-		if (love.keyboard.isDown("space") or love.keyboard.isDown("j")) and cooldown <= 0 then
+		if love.keyboard.isDown("delete") and cooldown <= 0 then
 			cooldown = SHOOT_COOLDOWN
 			local dx, dy = math.cos(ship.rot - math.pi / 2), math.sin(ship.rot - math.pi / 2)
 			bullets[#bullets + 1] = {
@@ -214,7 +215,7 @@ local function draw_ship_glow()
 	with_phosphor({ 0.85, 0.95, 1.0 }, function()
 		draw_polyline_loop({ 0, -14, 10, 12, 0, 6, -10, 12 })
 	end)
-	if love.keyboard.isDown("w", "up") then
+	if love.keyboard.isDown("up") then
 		with_phosphor({ 1.0, 0.55, 0.15 }, function()
 			love.graphics.line(-5, 8, 0, 18 + math.random() * 6, 5, 8)
 		end)
@@ -249,12 +250,12 @@ function love.draw()
 	love.graphics.print(string.format("Score %d   Wave %d   Lives %d", score, wave, lives), 12, 12)
 	if game_over then
 		love.graphics.setColor(1, 0.9, 0.6)
-		love.graphics.printf("GAME OVER — press R to restart", 0, H / 2 - 14, W, "center")
+		love.graphics.printf("GAME OVER — press End to restart", 0, H / 2 - 14, W, "center")
 	end
 
 	love.graphics.setColor(0.62, 0.7, 0.85)
 	love.graphics.printf(
-		"A/D rotate   |   W thrust   |   Space fire   |   R restart   |   Esc quit",
+		"← → rotate   |   ↑ thrust   |   ↓ brake   |   Del fire   |   End restart   |   Esc quit",
 		0, H - 22, W, "center")
 
 	love.graphics.setCanvas()
@@ -266,5 +267,5 @@ end
 
 function love.keypressed(k)
 	if k == "escape" then love.event.quit() end
-	if k == "r" and game_over then reset_game() end
+	if k == "end" and game_over then reset_game() end
 end

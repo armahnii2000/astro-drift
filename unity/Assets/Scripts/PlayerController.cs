@@ -8,6 +8,7 @@ namespace AstroDrift
 		public float thrust = 12f;
 		public float rotationSpeed = 240f;
 		public float drag = 0.55f;
+		public float brakeDrag = 0.08f;
 		public float maxSpeed = 16f;
 
 		[Header("Combat")]
@@ -36,14 +37,14 @@ namespace AstroDrift
 		void HandleRotation()
 		{
 			float rotInput = 0f;
-			if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) rotInput -= 1f;
-			if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) rotInput += 1f;
+			if (Input.GetKey(KeyCode.LeftArrow)) rotInput -= 1f;
+			if (Input.GetKey(KeyCode.RightArrow)) rotInput += 1f;
 			transform.Rotate(0f, 0f, -rotInput * rotationSpeed * Time.deltaTime);
 		}
 
 		void HandleThrust()
 		{
-			if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.UpArrow)) return;
+			if (!Input.GetKey(KeyCode.UpArrow)) return;
 			float angle = transform.eulerAngles.z * Mathf.Deg2Rad;
 			Vector2 forward = new Vector2(-Mathf.Sin(angle), Mathf.Cos(angle));
 			_velocity += forward * thrust * Time.deltaTime;
@@ -52,7 +53,7 @@ namespace AstroDrift
 		void HandleShoot()
 		{
 			_cooldown -= Time.deltaTime;
-			bool firing = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.J);
+			bool firing = Input.GetKey(KeyCode.Delete);
 			if (!firing || _cooldown > 0f || bulletPrefab == null) return;
 			_cooldown = shootCooldown;
 			float angle = transform.eulerAngles.z * Mathf.Deg2Rad;
@@ -64,7 +65,9 @@ namespace AstroDrift
 
 		void ApplyMotion()
 		{
-			_velocity *= Mathf.Pow(drag, Time.deltaTime);
+			bool braking = Input.GetKey(KeyCode.DownArrow);
+			float damp = braking ? brakeDrag : drag;
+			_velocity *= Mathf.Pow(damp, Time.deltaTime);
 			_velocity = Vector2.ClampMagnitude(_velocity, maxSpeed);
 			transform.position += (Vector3)_velocity * Time.deltaTime;
 		}

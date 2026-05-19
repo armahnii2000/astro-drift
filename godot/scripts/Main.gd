@@ -101,7 +101,7 @@ func _on_player_died() -> void:
 	hud.update_stats(score, lives)
 	if lives <= 0:
 		game_over = true
-		hud.show_message("GAME OVER\nPress R to restart")
+		hud.show_message("GAME OVER\nPress End to restart")
 		return
 	await get_tree().create_timer(1.2).timeout
 	if not game_over:
@@ -133,7 +133,7 @@ func _count_asteroids_remaining(exclude: Asteroid) -> int:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
-		if event.keycode == KEY_T:
+		if event.keycode == KEY_INSERT:
 			_toggle_crt()
-		elif game_over and event.keycode == KEY_R:
+		elif game_over and event.keycode == KEY_END:
 			_start_game()

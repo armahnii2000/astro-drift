@@ -7,6 +7,7 @@ signal died
 const THRUST := 380.0
 const ROT_SPEED := 4.2
 const DRAG_PER_SEC := 0.55
+const BRAKE_DRAG := 0.08
 const MAX_SPEED := 520.0
 const SHOOT_COOLDOWN := 0.18
 const INVULN_TIME := 2.0
@@ -15,6 +16,7 @@ var velocity := Vector2.ZERO
 var _cooldown := 0.0
 var _invuln := INVULN_TIME
 var _thrusting := false
+var _braking := false
 
 func _ready() -> void:
 	var shape := CircleShape2D.new()
@@ -34,21 +36,23 @@ func _process(delta: float) -> void:
 		modulate.a = 1.0
 
 	var rot_input := 0.0
-	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
+	if Input.is_physical_key_pressed(KEY_LEFT):
 		rot_input -= 1.0
-	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
+	if Input.is_physical_key_pressed(KEY_RIGHT):
 		rot_input += 1.0
 	rotation += rot_input * ROT_SPEED * delta
 
-	_thrusting = Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP)
+	_thrusting = Input.is_physical_key_pressed(KEY_UP)
+	_braking = Input.is_physical_key_pressed(KEY_DOWN)
 	if _thrusting:
 		velocity += Vector2.from_angle(rotation - PI / 2.0) * THRUST * delta
-	velocity *= pow(DRAG_PER_SEC, delta)
+	var damp := BRAKE_DRAG if _braking else DRAG_PER_SEC
+	velocity *= pow(damp, delta)
 	velocity = velocity.limit_length(MAX_SPEED)
 	position += velocity * delta
 
 	_cooldown -= delta
-	var firing := Input.is_physical_key_pressed(KEY_SPACE) or Input.is_physical_key_pressed(KEY_J)
+	var firing := Input.is_physical_key_pressed(KEY_DELETE)
 	if firing and _cooldown <= 0.0:
 		_cooldown = SHOOT_COOLDOWN
 		var dir := Vector2.from_angle(rotation - PI / 2.0)
